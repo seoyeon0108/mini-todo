@@ -1,10 +1,17 @@
 import React from "react";
 import TodoItem from "./TodoItem";
-import "./TodoList.css";
+import styled from "styled-components";
+
+const TodoListBlock = styled.div`
+    width: 90vw;
+    margin-left: auto;
+    margin-right: auto;
+    padding-bottom: 29px;
+`
 
 const TodoList = ({ todos, onCheckToggle, onInsertToggle, onChangeSelectedTodo }) => {
   return (
-    <div className='TodoList'>
+    <TodoListBlock>
       {todos.map((todo) => (
         <TodoItem 
           todo={todo} 
@@ -14,7 +21,7 @@ const TodoList = ({ todos, onCheckToggle, onInsertToggle, onChangeSelectedTodo }
           onChangeSelectedTodo={onChangeSelectedTodo}
         />
       ))}
-    </div>
+    </TodoListBlock>
   );
 };
 

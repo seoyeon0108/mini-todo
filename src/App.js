@@ -1,9 +1,21 @@
 import React, { useState } from 'react';
 import { MdAddCircle } from 'react-icons/md';
-import './App.css';
 import Template from './components/Template';
 import TodoInsert from './components/TodoInsert';
 import TodoList from './components/TodoList';
+import styled from 'styled-components';
+
+const CircleButton = styled.div`
+  position: fixed;
+  right: -5px;
+  bottom: 0;
+  z-index: 100;
+  width: 100px;
+  height: 100px;
+  cursor: pointer;
+  font-size:  5rem;
+  color:  #f67280;
+`
 
 let nextId = 4; // 밖에두는 이유는, 함수안에두면 계속초기화 되어서
 
@@ -31,10 +43,15 @@ const App = () => {
   const [selectedTodo, setSelectedTodo] = useState(null);// 원래 있던 일정 수정시, 값 가져오게끔 하는...
   // selectedTodo에는 선택한 한개의 todo객체가 들어 있음
 
+  //토글 열고 닫는 함수
   const onInsertToggle = () => {   //todo추가 폼나옴
+    if(selectedTodo){
+      setSelectedTodo(null)
+    } //이걸 안해주면, 추가하는 insert에 계속 값이 남아 있게됨.
     setInsertToggle(prev => !prev)
   }
 
+  // 할일 추가 함수
   const onInsertTodo = (text) =>{ //일정추가
     if(text === ''){
       return alert('할일을 입력해주세요')
@@ -54,13 +71,22 @@ const App = () => {
     setTodos(todos => todos.map(todo => (todo.id === id ? {...todo, checked: !todo.checked} : todo)))
   }
 
+  // 기존 할일 선택해서 그 값읽는 함수
   const onChangeSelectedTodo = (todo) => {
     setSelectedTodo(todo)
   }
 
+  // 할일 삭제 함수
   const onRemove = (id) => {
     setInsertToggle(); //삭제하면 창이 닫힘
-    setTodos(todos => todos.filter(todo => todo.id != id));
+    setTodos(todos => todos.filter(todo => todo.id != id)); // 일치하지 않는 할일만 남기기 // 일치하는건 삭제되는!
+  }
+
+  // 기존 할일 수정 함수
+  const onUpdate = (id, text) => {
+    onInsertToggle();
+    setTodos(todos => 
+      todos.map(todo => todo.id === id ? {...todo, text} : todo)) // {...todo, text}수정된 text만 바꾸고 나머지는 그대로 하는 전개구문
   }
 
   return(
@@ -71,15 +97,16 @@ const App = () => {
         onInsertToggle={onInsertToggle}
         onChangeSelectedTodo={onChangeSelectedTodo}
       />
-      <div className='add-todo-button' onClick={onInsertToggle}>
+      <CircleButton onClick={onInsertToggle}>
         <MdAddCircle/>
-      </div>
+      </CircleButton>
       {insertToggle && 
         <TodoInsert 
           onInsertToggle={onInsertToggle}
           onInsertTodo={onInsertTodo}
           selectedTodo={selectedTodo}
           onRemove={onRemove}
+          onUpdate={onUpdate}
         />}
     </Template>
 
